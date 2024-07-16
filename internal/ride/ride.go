@@ -5,44 +5,58 @@ import (
 	"strconv"
 
 	"github.com/PAlagusurya/geektrust/internal/driver"
+	"github.com/PAlagusurya/geektrust/internal/rider"
 	"github.com/PAlagusurya/geektrust/pkg/models"
 )
 
-var Rides []*models.RideDetails
+/*
+1. Check if rideId is already present in Rides. If it is, print "INVALID_RIDE".
+2. Ensure that the value of n is less than or equal to the length of the matched drivers for the corresponding rider.
+3. Check if the matched driver is available. If they are, share the rideId otherwise, print "DRIVER NOT AVAILABLE".
+*/
 
-var MatchesMap = make(map[string][]string)
+var RideList []*models.RideDetails
 
-func StartRide(rideId, n, riderId string) {
-	nthValue, err := strconv.Atoi(n)
+func StartRide(rideId, nthDriverIndex, riderId string) {
+	var matchedDrivers []string
+	nthDriver, err := strconv.Atoi(nthDriverIndex)
+
 	if err != nil {
-		fmt.Println("Invalid value for n:", err)
-		return
+		fmt.Printf("Error converting '%s' to integer: %v\n", nthDriverIndex, err)
 	}
 
-	if matchedDriverIds, exists := MatchesMap[riderId]; exists {
-		if nthValue >= len(matchedDriverIds) {
-			fmt.Println("Invalid nth value")
+	for _, ride := range RideList {
+		if ride.RideId == rideId {
+			fmt.Println("INVALID_RIDE")
 			return
 		}
-		matchedDriverId := matchedDriverIds[nthValue]
-		for _, driver := range driver.DriverList {
-			if driver.DriverId == matchedDriverId {
-				if !driver.IsAvailable {
-					fmt.Println("DRIVER NOT AVAILABLE")
-					return
-				}
-				ride := &models.RideDetails{
+	}
+
+	if matchedDriverIds, exists := rider.RiderToDriverMap[riderId]; exists {
+		matchedDrivers = matchedDriverIds
+		if nthDriver > len(matchedDriverIds) {
+			fmt.Println("DRIVER NOT AVAILABLE")
+			return
+		}
+	}
+
+	requestedDriver := matchedDrivers[nthDriver-1]
+
+	for _, driver := range driver.DriverList {
+		if driver.DriverId == requestedDriver {
+			if driver.IsAvailable {
+				ride := models.RideDetails{
 					RideId:   rideId,
 					RiderId:  riderId,
-					DriverId: matchedDriverId,
+					DriverId: driver.DriverId,
 				}
-				Rides = append(Rides, ride)
+				RideList = append(RideList, &ride)
 				driver.IsAvailable = false
-				fmt.Println("RIDE_STARTED", rideId)
+				fmt.Println("RIDE_STARTED" + " " + rideId)
+			} else {
+				fmt.Println("DRIVER NOT AVAILABLE")
 				return
 			}
 		}
-	} else {
-		fmt.Println("No matches found for rider")
 	}
 }

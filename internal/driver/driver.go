@@ -21,6 +21,6 @@ func AddDriver(driverId, x, y string) {
 		return
 	}
 
-	driver := models.NewDriver(driverId, xCoord, yCoord)
-	DriverList = append(DriverList, driver)
+	newDriver := models.NewDriver(driverId, xCoord, yCoord)
+	DriverList = append(DriverList, newDriver)
 }

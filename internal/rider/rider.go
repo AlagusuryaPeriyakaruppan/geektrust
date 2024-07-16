@@ -11,7 +11,9 @@ import (
 )
 
 var RiderList []*models.Rider
-var MatchesMap = make(map[string][]string)
+var RiderToDriverMap = make((map[string][]string))
+
+const maxDistance = 5
 
 func AddRider(riderId, x, y string) {
 	xCoord, err := strconv.Atoi(x)
@@ -25,13 +27,13 @@ func AddRider(riderId, x, y string) {
 		return
 	}
 
-	rider := models.NewRider(riderId, xCoord, yCoord)
-	RiderList = append(RiderList, rider)
+	newRider := models.NewRider(riderId, xCoord, yCoord)
+	RiderList = append(RiderList, newRider)
 }
 
 func MatchRiders(riderId string) {
 	var matchedRider *models.Rider
-	var driverDistance []models.DriverDistanceFromRider
+	var matchingDrivers []models.DriverDistanceFromRider
 	var matchedDriverIds []string
 
 	for _, rider := range RiderList {
@@ -41,35 +43,31 @@ func MatchRiders(riderId string) {
 		}
 	}
 
-	if matchedRider == nil {
-		fmt.Println("Rider not found")
-		return
-	}
-
 	for _, driver := range driver.DriverList {
 		distance := common.CalculateDistance(driver.DriverXCoord, driver.DriverYCoord, matchedRider.RiderXCoord, matchedRider.RiderYCoord)
-		if distance <= 5 {
-			driverDistance = append(driverDistance, models.DriverDistanceFromRider{Driver: driver, Distance: distance})
+		if distance <= maxDistance {
+			matchingDrivers = append(matchingDrivers, models.DriverDistanceFromRider{Driver: driver, Distance: distance})
 		}
 	}
 
-	sort.Slice(driverDistance, func(i, j int) bool {
-		if driverDistance[i].Distance == driverDistance[j].Distance {
-			return driverDistance[i].Driver.DriverId < driverDistance[j].Driver.DriverId
+	sort.Slice(matchingDrivers, func(i, j int) bool {
+		if matchingDrivers[i].Distance == matchingDrivers[j].Distance {
+			return matchingDrivers[i].Driver.DriverId < matchingDrivers[j].Driver.DriverId
 		}
-		return driverDistance[i].Distance < driverDistance[j].Distance
+		return matchingDrivers[i].Distance < matchingDrivers[j].Distance
 	})
 
-	if len(driverDistance) == 0 {
+	if len(matchingDrivers) == 0 {
 		fmt.Println("NO_DRIVERS_AVAILABLE")
 	} else {
 		fmt.Print("DRIVERS_MATCHED")
-		for _, driverDetails := range driverDistance {
+		for _, driverDetails := range matchingDrivers {
 			driverId := driverDetails.Driver.DriverId
 			fmt.Printf(" %s", driverId)
 			matchedDriverIds = append(matchedDriverIds, driverId)
 		}
 		fmt.Println()
-		MatchesMap[riderId] = matchedDriverIds
+		// Store matched driver IDs for the rider
+		RiderToDriverMap[riderId] = matchedDriverIds
 	}
 }
