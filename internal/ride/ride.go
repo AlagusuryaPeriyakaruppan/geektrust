@@ -10,7 +10,7 @@ import (
 )
 
 /*
-1. Check if rideId is already present in Rides. If it is, print "INVALID_RIDE".
+1. Check if rideId is already present in RideList. If it is, print "INVALID_RIDE".
 2. Ensure that the value of n is less than or equal to the length of the matched drivers for the corresponding rider.
 3. Check if the matched driver is available. If they are, share the rideId otherwise, print "DRIVER NOT AVAILABLE".
 */
@@ -25,6 +25,7 @@ func StartRide(rideId, nthDriverIndex, riderId string) {
 		fmt.Printf("Error converting '%s' to integer: %v\n", nthDriverIndex, err)
 	}
 
+	//You cannot start the ride which is already started
 	for _, ride := range RideList {
 		if ride.RideId == rideId {
 			fmt.Println("INVALID_RIDE")
