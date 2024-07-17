@@ -25,6 +25,7 @@ func AddRider(riderId, x, y string) {
 }
 
 func MatchRiders(riderId string) {
+
 	matchedRider := FindRiderById(riderId)
 	if matchedRider == nil {
 		fmt.Println(common.ErrorInvalidRide)
@@ -32,6 +33,7 @@ func MatchRiders(riderId string) {
 	}
 
 	matchingDrivers := FindMatchingDrivers(matchedRider)
+
 	if len(matchingDrivers) == 0 {
 		fmt.Println(common.MessageNoDriversAvailable)
 		return

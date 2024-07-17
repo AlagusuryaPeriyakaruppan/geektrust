@@ -20,9 +20,10 @@ func FindRiderById(riderId string) *models.Rider {
 
 func FindMatchingDrivers(matchedRider *models.Rider) []models.DriverDistanceFromRider {
 	var matchingDrivers []models.DriverDistanceFromRider
+
 	for _, driver := range driver.DriverList {
 		distance := common.CalculateDistance(driver.DriverXCoord, driver.DriverYCoord, matchedRider.RiderXCoord, matchedRider.RiderYCoord)
-		if distance <= maxDistance {
+		if distance <= maxDistance && driver.IsAvailable {
 			matchingDrivers = append(matchingDrivers, models.DriverDistanceFromRider{Driver: driver, Distance: distance})
 		}
 	}
