@@ -18,19 +18,18 @@ func main() {
 
 	filePath := cliArgs[0]
 	file, err := os.Open(filePath)
-
 	if err != nil {
-		fmt.Println("Error opening the input file")
+		fmt.Println("Error opening the input file:", err)
 		return
 	}
-
 	defer file.Close()
+
 	scanner := bufio.NewScanner(file)
-
 	for scanner.Scan() {
+		inputhandler.ProcessInput(scanner.Text())
+	}
 
-		args := scanner.Text()
-		inputhandler.ProcessInput(args)
-
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Error reading the input file:", err)
 	}
 }
