@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/PAlagusurya/geektrust/internal/common"
-	"github.com/PAlagusurya/geektrust/internal/driver"
 	"github.com/PAlagusurya/geektrust/internal/rider"
 	"github.com/PAlagusurya/geektrust/pkg/models"
 )
@@ -19,7 +18,6 @@ import (
 var RideList []*models.RideDetails
 
 func StartRide(rideId, nthDriverIndex, riderId string) {
-	var matchedDrivers []string
 	nthDriver, err := strconv.Atoi(nthDriverIndex)
 
 	if err != nil {
@@ -27,43 +25,26 @@ func StartRide(rideId, nthDriverIndex, riderId string) {
 	}
 
 	//You cannot start the ride which is already started
-	for _, ride := range RideList {
-		if ride.RideId == rideId {
-			fmt.Println(common.ErrorInvalidRide)
-			return
-		}
+	if isRideAlreadyStarted(rideId) {
+		fmt.Println(common.ErrorInvalidRide)
+		return
 	}
 
-	if matchedDriverIds, exists := rider.RiderToDriverMap[riderId]; exists {
-		matchedDrivers = matchedDriverIds
-		if nthDriver > len(matchedDriverIds) {
-			fmt.Println(common.ErrorDriverNotAvailable)
-			return
-		}
+	matchedDrivers, exists := rider.RiderToDriverMap[riderId]
+	if !exists || nthDriver > len(matchedDrivers) {
+		fmt.Println(common.ErrorDriverNotAvailable)
+		return
 	}
 
 	requestedDriver := matchedDrivers[nthDriver-1]
 
-	for _, driver := range driver.DriverList {
-		if driver.DriverId == requestedDriver {
-			if driver.IsAvailable {
-				ride := models.RideDetails{
-					RideId:          rideId,
-					RiderId:         riderId,
-					DriverId:        driver.DriverId,
-					IsRideCompleted: false,
-				}
-				RideList = append(RideList, &ride)
-				driver.IsAvailable = false
-				fmt.Println(common.MessageRideStarted + " " + rideId)
-			} else {
-				fmt.Println(common.ErrorDriverNotAvailable)
-				return
-			}
-		}
+	if !assignDriverToRide(requestedDriver, rideId, riderId) {
+		fmt.Println(common.ErrorDriverNotAvailable)
 	}
+
 }
 
+// StopRide stops a ride and calculates the distance traveled
 func StopRide(rideId, x, y, time string) {
 	xCoord, err := common.ConvertStringToInt(x, common.ErrorInvalidXCoord)
 	if err != nil {
@@ -76,25 +57,35 @@ func StopRide(rideId, x, y, time string) {
 	}
 
 	totalTime, err := common.ConvertStringToInt(time, common.ErrorInvalidTime)
-	if err != nil {
+	if err != nil || totalTime < 0 {
+		fmt.Println(common.ErrorInvalidTime)
 		return
 	}
 
 	for _, ride := range RideList {
-		if ride.RideId != rideId || ride.IsRideCompleted {
-			fmt.Println(common.ErrorInvalidRide)
+		if ride.RideId == rideId && !ride.IsRideCompleted {
+			CompleteRide(ride, xCoord, yCoord, totalTime)
+			fmt.Printf("%s %s\n", common.MessageRideStopped, rideId)
 			return
-		} else {
-			for _, rider := range rider.RiderList {
-				if rider.RiderId == ride.RiderId {
-					totalDistanceTravelled := common.CalculateDistance(rider.RiderXCoord, rider.RiderYCoord, xCoord, yCoord)
-					ride.Distance = totalDistanceTravelled
-					ride.TotalTimeTaken = totalTime
-					ride.IsRideCompleted = true
-					fmt.Printf("%s %s\n", common.MessageRideStopped, rideId)
-					return
-				}
-			}
 		}
 	}
+
+	fmt.Println(common.ErrorInvalidRide)
+}
+
+func CalculateBill(rideId string) {
+	for _, ride := range RideList {
+		if ride.RideId == rideId {
+			if !ride.IsRideCompleted {
+				fmt.Println(common.MessageRideNotCompleted)
+				return
+			}
+
+			ride.Bill = CalculateBillAmount(ride.Distance, ride.TotalTimeTaken)
+			fmt.Printf("BILL %s %s %0.2f\n", ride.RideId, ride.DriverId, ride.Bill)
+			return
+		}
+	}
+
+	fmt.Println(common.ErrorInvalidRide)
 }
