@@ -16,4 +16,5 @@ const (
 	AdditionalFarePerKm       = 6.5
 	AdditionalFarePerMin      = 2.0
 	ServiceTaxRate            = 0.20
+	DistancePrecision         = 100
 )

@@ -52,5 +52,5 @@ func CompleteRide(ride *models.RideDetails, xCoord, yCoord, totalTime int) {
 func CalculateBillAmount(distance float64, totalTime int) float64 {
 	preTaxAmount := distance*common.AdditionalFarePerKm + float64(totalTime)*common.AdditionalFarePerMin + common.BaseFare
 	billAmount := preTaxAmount + (preTaxAmount * common.ServiceTaxRate)
-	return math.Round(billAmount*100) / 100
+	return math.Round(billAmount*common.DistancePrecision) / common.DistancePrecision
 }

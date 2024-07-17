@@ -20,5 +20,19 @@ func CalculateDistance(x1, y1, x2, y2 int) float64 {
 	diffInY := float64(y2 - y1)
 
 	distance := math.Sqrt(diffInX*diffInX + diffInY*diffInY)
-	return math.Round(distance*100) / 100
+	return math.Round(distance*DistancePrecision) / DistancePrecision
+}
+
+func ConvertCoordinates(x, y, errMsgX, errMsgY string) (int, int, error) {
+	xCoord, err := ConvertStringToInt(x, errMsgX)
+	if err != nil {
+		return 0, 0, fmt.Errorf("error converting X coordinate: %w", err)
+	}
+
+	yCoord, err := ConvertStringToInt(y, errMsgY)
+	if err != nil {
+		return 0, 0, fmt.Errorf("error converting Y coordinate: %w", err)
+	}
+
+	return xCoord, yCoord, nil
 }

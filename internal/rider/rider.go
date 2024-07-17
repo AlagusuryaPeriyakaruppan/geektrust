@@ -14,13 +14,9 @@ const maxDistance = 5
 
 func AddRider(riderId, x, y string) {
 
-	xCoord, err := common.ConvertStringToInt(x, common.ErrorInvalidXCoord)
+	xCoord, yCoord, err := common.ConvertCoordinates(x, y, common.ErrorInvalidXCoord, common.ErrorInvalidYCoord)
 	if err != nil {
-		return
-	}
-
-	yCoord, err := common.ConvertStringToInt(y, common.ErrorInvalidYCoord)
-	if err != nil {
+		fmt.Println(err)
 		return
 	}
 
