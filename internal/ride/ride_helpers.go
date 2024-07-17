@@ -38,7 +38,9 @@ func assignDriverToRide(driverId, rideId, riderId string) bool {
 				IsRideCompleted: false,
 			}
 			RideList = append(RideList, &ride)
+
 			driver.IsAvailable = false
+
 			fmt.Println(common.MessageRideStarted + " " + rideId)
 			return true
 		}
@@ -59,6 +61,7 @@ func CompleteRide(ride *models.RideDetails, xCoord, yCoord, totalTime int) {
 
 func CalculateBillAmount(distance float64, totalTime int) float64 {
 	preTaxAmount := distance*common.AdditionalFarePerKm + float64(totalTime)*common.AdditionalFarePerMin + common.BaseFare
+	preTaxAmount = math.Round(preTaxAmount*common.DistancePrecision) / common.DistancePrecision
 	billAmount := preTaxAmount * (1 + common.ServiceTaxRate)
 	return math.Round(billAmount*common.DistancePrecision) / common.DistancePrecision
 }
