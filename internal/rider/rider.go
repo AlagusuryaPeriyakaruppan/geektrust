@@ -2,10 +2,8 @@ package rider
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/PAlagusurya/geektrust/internal/common"
-	"github.com/PAlagusurya/geektrust/internal/driver"
 	"github.com/PAlagusurya/geektrust/pkg/models"
 )
 
@@ -31,42 +29,19 @@ func AddRider(riderId, x, y string) {
 }
 
 func MatchRiders(riderId string) {
-	var matchedRider *models.Rider
-	var matchingDrivers []models.DriverDistanceFromRider
-	var matchedDriverIds []string
-
-	for _, rider := range RiderList {
-		if rider.RiderId == riderId {
-			matchedRider = rider
-			break
-		}
+	matchedRider := FindRiderById(riderId)
+	if matchedRider == nil {
+		fmt.Println(common.ErrorInvalidRide)
+		return
 	}
 
-	for _, driver := range driver.DriverList {
-		distance := common.CalculateDistance(driver.DriverXCoord, driver.DriverYCoord, matchedRider.RiderXCoord, matchedRider.RiderYCoord)
-		if distance <= maxDistance {
-			matchingDrivers = append(matchingDrivers, models.DriverDistanceFromRider{Driver: driver, Distance: distance})
-		}
-	}
-
-	sort.Slice(matchingDrivers, func(i, j int) bool {
-		if matchingDrivers[i].Distance == matchingDrivers[j].Distance {
-			return matchingDrivers[i].Driver.DriverId < matchingDrivers[j].Driver.DriverId
-		}
-		return matchingDrivers[i].Distance < matchingDrivers[j].Distance
-	})
-
+	matchingDrivers := FindMatchingDrivers(matchedRider)
 	if len(matchingDrivers) == 0 {
 		fmt.Println(common.MessageNoDriversAvailable)
-	} else {
-		fmt.Print(common.MessageDriversMatched)
-		for _, driverDetails := range matchingDrivers {
-			driverId := driverDetails.Driver.DriverId
-			fmt.Printf(" %s", driverId)
-			matchedDriverIds = append(matchedDriverIds, driverId)
-		}
-		fmt.Println()
-		// Store matched driver IDs for the rider
-		RiderToDriverMap[riderId] = matchedDriverIds
+		return
 	}
+
+	SortAndPrintMatchingDrivers(matchingDrivers)
+	StoreMatchedDrivers(riderId, matchingDrivers)
+
 }
