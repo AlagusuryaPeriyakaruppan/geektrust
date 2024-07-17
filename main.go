@@ -4,11 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 
-	"github.com/PAlagusurya/geektrust/internal/driver"
-	"github.com/PAlagusurya/geektrust/internal/ride"
-	"github.com/PAlagusurya/geektrust/internal/rider"
+	"github.com/PAlagusurya/geektrust/internal/inputhandler"
 )
 
 func main() {
@@ -33,26 +30,7 @@ func main() {
 	for scanner.Scan() {
 
 		args := scanner.Text()
-		argList := strings.Fields(args)
-
-		action := argList[0]
-
-		switch action {
-		case "ADD_DRIVER":
-			driver.AddDriver(argList[1], argList[2], argList[3])
-		case "ADD_RIDER":
-			rider.AddRider(argList[1], argList[2], argList[3])
-		case "MATCH":
-			rider.MatchRiders(argList[1])
-		case "START_RIDE":
-			ride.StartRide(argList[1], argList[2], argList[3])
-		case "STOP_RIDE":
-			ride.StopRide(argList[1], argList[2], argList[3], argList[4])
-		case "BILL":
-			ride.CalculateBill(argList[1])
-		default:
-			fmt.Println("ACTION NOT FOUND")
-		}
+		inputhandler.ProcessInput(args)
 
 	}
 }

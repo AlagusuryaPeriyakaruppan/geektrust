@@ -36,3 +36,7 @@ func ConvertCoordinates(x, y, errMsgX, errMsgY string) (int, int, error) {
 
 	return xCoord, yCoord, nil
 }
+
+func HandleError(err error) {
+	fmt.Println("Error:", err)
+}
