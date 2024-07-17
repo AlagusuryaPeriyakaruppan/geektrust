@@ -31,6 +31,12 @@ func StartRide(rideId, nthDriverIndex, riderId string) {
 	}
 
 	matchedDrivers, exists := rider.RiderToDriverMap[riderId]
+
+	if len(matchedDrivers) == 0 {
+		fmt.Println(common.ErrorInvalidRide)
+		return
+	}
+
 	if !exists || nthDriver > len(matchedDrivers) {
 		fmt.Println(common.ErrorDriverNotAvailable)
 		return
