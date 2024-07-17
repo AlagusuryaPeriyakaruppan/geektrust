@@ -3,7 +3,6 @@ package rider
 import (
 	"fmt"
 	"sort"
-	"strconv"
 
 	"github.com/PAlagusurya/geektrust/internal/common"
 	"github.com/PAlagusurya/geektrust/internal/driver"
@@ -16,14 +15,14 @@ var RiderToDriverMap = make((map[string][]string))
 const maxDistance = 5
 
 func AddRider(riderId, x, y string) {
-	xCoord, err := strconv.Atoi(x)
+
+	xCoord, err := common.ConvertStringToInt(x, common.ErrorInvalidXCoord)
 	if err != nil {
-		fmt.Println("Invalid x coordinate:", err)
 		return
 	}
-	yCoord, err := strconv.Atoi(y)
+
+	yCoord, err := common.ConvertStringToInt(y, common.ErrorInvalidYCoord)
 	if err != nil {
-		fmt.Println("Invalid y coordinate:", err)
 		return
 	}
 
@@ -58,9 +57,9 @@ func MatchRiders(riderId string) {
 	})
 
 	if len(matchingDrivers) == 0 {
-		fmt.Println("NO_DRIVERS_AVAILABLE")
+		fmt.Println(common.MessageNoDriversAvailable)
 	} else {
-		fmt.Print("DRIVERS_MATCHED")
+		fmt.Print(common.MessageDriversMatched)
 		for _, driverDetails := range matchingDrivers {
 			driverId := driverDetails.Driver.DriverId
 			fmt.Printf(" %s", driverId)

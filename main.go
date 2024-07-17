@@ -46,6 +46,8 @@ func main() {
 			rider.MatchRiders(argList[1])
 		case "START_RIDE":
 			ride.StartRide(argList[1], argList[2], argList[3])
+		case "STOP_RIDE":
+			ride.StopRide(argList[1], argList[2], argList[3], argList[4])
 		default:
 			fmt.Println("ACTION NOT FOUND")
 		}
