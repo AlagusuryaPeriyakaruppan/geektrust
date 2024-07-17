@@ -29,7 +29,4 @@ func main() {
 		inputhandler.ProcessInput(scanner.Text())
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading the input file:", err)
-	}
 }
