@@ -4,8 +4,18 @@ import "errors"
 
 // Error constants
 var (
-	ErrorInvalidArguments = errors.New("Invalid arguments")
-	ErrorInvalidAction    = errors.New("Invalid action")
+	ErrorInvalidArguments = errors.New("invalid arguments")
+	ErrorInvalidAction    = errors.New("invalid action")
+)
+
+// Arguments constants
+const (
+	MinArgsAddDriver = 4
+	MinArgsAddRider  = 4
+	MinArgsMatch     = 2
+	MinArgsStartRide = 4
+	MinArgsStopRide  = 5
+	MinArgsBill      = 2
 )
 
 // Command constants
@@ -24,7 +34,6 @@ const (
 	ErrorInvalidYCoord        = "Invalid y coordinate:"
 	ErrorInvalidTime          = "Invalid time format"
 	ErrorInvalidRide          = "INVALID_RIDE"
-	ErrorTimeTaken            = "INVALID_TIME_TAKEN"
 	MessageRideStopped        = "RIDE_STOPPED"
 	MessageRideStarted        = "RIDE_STARTED"
 	ErrorDriverNotAvailable   = "DRIVER NOT AVAILABLE"

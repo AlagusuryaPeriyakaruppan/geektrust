@@ -19,37 +19,37 @@ func ProcessInput(args string) {
 
 	switch action {
 	case common.CommandAddDriver:
-		if len(argList) < 4 {
+		if len(argList) < common.MinArgsAddDriver {
 			common.HandleError(common.ErrorInvalidArguments)
 			return
 		}
 		driver.AddDriver(argList[1], argList[2], argList[3])
 	case common.CommandAddRider:
-		if len(argList) < 4 {
+		if len(argList) < common.MinArgsAddRider {
 			common.HandleError(common.ErrorInvalidArguments)
 			return
 		}
 		rider.AddRider(argList[1], argList[2], argList[3])
 	case common.CommandMatch:
-		if len(argList) < 2 {
+		if len(argList) < common.MinArgsMatch {
 			common.HandleError(common.ErrorInvalidArguments)
 			return
 		}
 		rider.MatchRiders(argList[1])
 	case common.CommandStartRide:
-		if len(argList) < 4 {
+		if len(argList) < common.MinArgsStartRide {
 			common.HandleError(common.ErrorInvalidArguments)
 			return
 		}
 		ride.StartRide(argList[1], argList[2], argList[3])
 	case common.CommandStopRide:
-		if len(argList) < 5 {
+		if len(argList) < common.MinArgsStopRide {
 			common.HandleError(common.ErrorInvalidArguments)
 			return
 		}
 		ride.StopRide(argList[1], argList[2], argList[3], argList[4])
 	case common.CommandBill:
-		if len(argList) < 2 {
+		if len(argList) < common.MinArgsBill {
 			common.HandleError(common.ErrorInvalidArguments)
 			return
 		}

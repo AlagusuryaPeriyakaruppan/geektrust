@@ -16,7 +16,7 @@ func AddRider(riderId, x, y string) {
 
 	xCoord, yCoord, err := common.ConvertCoordinates(x, y, common.ErrorInvalidXCoord, common.ErrorInvalidYCoord)
 	if err != nil {
-		fmt.Println(err)
+		common.HandleError(err)
 		return
 	}
 

@@ -46,19 +46,15 @@ func StartRide(rideId, nthDriverIndex, riderId string) {
 
 // StopRide stops a ride and calculates the distance traveled
 func StopRide(rideId, x, y, time string) {
-	xCoord, err := common.ConvertStringToInt(x, common.ErrorInvalidXCoord)
+	xCoord, yCoord, err := common.ConvertCoordinates(x, y, common.ErrorInvalidXCoord, common.ErrorInvalidYCoord)
 	if err != nil {
-		return
-	}
-
-	yCoord, err := common.ConvertStringToInt(y, common.ErrorInvalidYCoord)
-	if err != nil {
+		common.HandleError((err))
 		return
 	}
 
 	totalTime, err := common.ConvertStringToInt(time, common.ErrorInvalidTime)
-	if err != nil || totalTime < 0 {
-		fmt.Println(common.ErrorInvalidTime)
+	if err != nil {
+		common.HandleError(err)
 		return
 	}
 
@@ -74,18 +70,17 @@ func StopRide(rideId, x, y, time string) {
 }
 
 func CalculateBill(rideId string) {
-	for _, ride := range RideList {
-		if ride.RideId == rideId {
-			if !ride.IsRideCompleted {
-				fmt.Println(common.MessageRideNotCompleted)
-				return
-			}
-
-			ride.Bill = CalculateBillAmount(ride.Distance, ride.TotalTimeTaken)
-			fmt.Printf("BILL %s %s %0.2f\n", ride.RideId, ride.DriverId, ride.Bill)
-			return
-		}
+	ride := FindRideByID(rideId)
+	if ride == nil {
+		fmt.Println(common.ErrorInvalidRide)
+		return
 	}
 
-	fmt.Println(common.ErrorInvalidRide)
+	if !ride.IsRideCompleted {
+		fmt.Println(common.MessageRideNotCompleted)
+		return
+	}
+
+	ride.Bill = CalculateBillAmount(ride.Distance, ride.TotalTimeTaken)
+	fmt.Printf("BILL %s %s %0.2f\n", ride.RideId, ride.DriverId, ride.Bill)
 }
